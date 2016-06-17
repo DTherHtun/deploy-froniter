@@ -1,0 +1,27 @@
+---
+- hosts: frontier
+  remote_user: root
+  tasks:
+  - name: Activate Interface
+    command: ifconfig eth0 up
+
+  - name: Pulling From Github
+    git: repo=git@github.com:Bindez/frontier.git dest=/usr/share/jboss-as/standalone/trunk/
+
+  - name: Compiling Package
+    command: chdir=/usr/share/jboss-as/standalone/trunk/ /usr/bin/mvn clean package
+
+  - name: Stop wildfly Service
+    service: name=jboss state=stopped
+  
+  - name: Remove Old Package
+    file: path=/usr/share/jboss-as/standalone/deployments/ROOT.war state=absent
+
+  - name: Move New Package For Deploy
+    command: chdir=/usr/share/jboss-as/standalone/trunk/target/ /usr/bin/cp BindezFrontier-0.0.1-SNAPSHOT.war /usr/share/jboss-as/standalone/deployments/ROOT.war
+
+  - name: Start Wildfly
+    service: name=jboss state=started
+
+  - name: Deactivate Interface
+    command: ifconfig eth0 down         
