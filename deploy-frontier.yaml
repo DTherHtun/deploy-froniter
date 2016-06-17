@@ -1,5 +1,6 @@
 ---
-- hosts: frontier
+- name: Deploy Frontier
+  hosts: Frontier
   remote_user: root
   tasks:
   - name: Activate Interface
@@ -11,19 +12,14 @@
   - name: Compiling Package
     command: chdir=/usr/share/jboss-as/standalone/trunk/ /usr/bin/mvn clean package
 
-  - name: Stop wildfly Service
-    service: name=jboss state=stopped
+  - name: Undeploying Current War
+    jboss: deploy_path=/usr/share/jboss-as/standalone/deployments/ deployment=ROOT.war state=absent
   
   - name: Remove Old Package
     file: path=/usr/share/jboss-as/standalone/deployments/ROOT.war state=absent
 
-  - name: Move New Package For Deploy
-    command: chdir=/usr/share/jboss-as/standalone/trunk/target/ /usr/bin/cp BindezFrontier-0.0.1-SNAPSHOT.war /usr/share/jboss-as/standalone/deployments/ROOT.war
-
-  - name: Start Wildfly
-    service: name=jboss state=started
-    async: 45
-    pull: 0
+  - name: Deploying New War
+    jboss: deploy_path=/usr/share/jboss-as/standalone/deployments/ src=/usr/share/jboss-as/standalone/trunk/target/BindezFrontier-0.0.1-SNAPSHOT.war deployment=ROOT.war state=present
 
   - name: Deactivate Interface
     command: ifconfig eth0 down         
