@@ -22,6 +22,8 @@
 
   - name: Start Wildfly
     service: name=jboss state=started
+    async: 45
+    pull: 0
 
   - name: Deactivate Interface
     command: ifconfig eth0 down         
