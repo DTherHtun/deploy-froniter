@@ -1,0 +1,28 @@
+---
+- hosts: bindez
+  remote_user: root
+  tasks:
+  - name: Pulling From Github
+    git: repo=git@github.com:Bindez/frontier.git dest=/var/lib/wildfly/standalone/frontier
+
+  - name: Compiling Package
+    command: chdir=/var/lib/wildfly/standalone/frontier /usr/bin/mvn clean package
+
+  - name: Stop wildfly Service
+    service: name=wildfly state=stopped
+
+  - name: Check Old Package
+    stat: path=/var/lib/wildfly/standalone/deployments/ROOT.war
+    register: old_pack
+  
+  - name: Remove Old Package
+    file: path=/var/lib/wildfly/standalone/deployments/ROOT.war state=absent
+    when: old_pack.stat.exists
+
+  - name: Move New Package For Deploy
+    command: chdir=/var/lib/wildfly/standalone/frontier/target/ /usr/bin/cp BindezFrontier-0.0.1-SNAPSHOT.war /var/lib/wildfly/standalone/deployments/ROOT.war
+
+  - name: Start Wildfly
+    service: name=wildfly state=started
+
+         

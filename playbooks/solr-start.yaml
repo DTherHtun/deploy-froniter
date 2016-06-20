@@ -1,0 +1,6 @@
+---
+- host:
+  remote_user: root
+  tasks:
+  - name: Start Tomcat Service
+    command: /bin/bash /root/apache-tomcat-6.0.39/bin/startup.sh

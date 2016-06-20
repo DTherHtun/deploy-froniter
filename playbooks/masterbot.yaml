@@ -1,0 +1,12 @@
+---
+- hosts: core[0]
+  remote_user: root
+  tasks:
+  - name: Copy-Merge-Replicate
+    command: "~/IndexManager-Mobile/bin/Masterbot.sh"
+  - name: Stop Tomcat
+    command: "~/apache-tomcat-6.0.39/bin/shutdown.sh"
+  - name: Start Tomcat
+    command: "nohup ~/apache-tomcat-6.0.39/bin/startup.sh &"
+    async: 45
+    poll: 0

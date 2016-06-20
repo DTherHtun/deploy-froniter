@@ -1,0 +1,10 @@
+---
+- hosts: crawler
+  remote_user: root
+  tasks:
+  - name: Stop-Tomcat-Service
+    command: sh /root/apache-tomcat-6.0.39/bin/shutdown.sh
+  - name: Start-Tomcat-Service
+    command: sh /root/apache-tomcat-6.0.39/bin/startup.sh
+
+
