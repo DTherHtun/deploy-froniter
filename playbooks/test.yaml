@@ -1,0 +1,10 @@
+- name: check registered variable for emptiness
+  hosts: 10.130.127.139:10.130.10.237
+  tasks:
+  - uri: url=http://10.130.183.19:8080/ return_content=yes
+    register: respon
+
+  - command: systemctl reboot
+    when: '"BINDEZ" not in respon.content'
+
+
